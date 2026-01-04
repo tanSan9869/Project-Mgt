@@ -28,12 +28,11 @@ const syncuserDeletion = inngest.createFunction(
     {id:'delete-user-from-client'},
     {event:'clerk/user.deleted'},
     async ({event}) => {
-        const {data} = event
-        await prisma.user.delete({
-            where:{
-                id:data.id,
-            }
-        })
+        const { data } = event;
+        // Use deleteMany to avoid throwing when record doesn't exist
+        await prisma.user.deleteMany({
+            where: { id: data.id }
+        });
     }
 )
 
@@ -43,17 +42,17 @@ const syncuserUpdation = inngest.createFunction(
     {id:'update-user-from-client'},
     {event:'clerk/user.updated'},
     async ({event}) => {
-        const {data} = event
-        await prisma.user.update({
-            where:{
-                id:data.id,
-            },
-            data:{
-                email:data?.email_addresses?.[0]?.email_address,
-                name:data?.first_name + " " + data?.last_name,
-                image:data?.image_url
-            }
-        })
+        const { data } = event;
+        const email = data?.email_addresses?.[0]?.email_address ?? "";
+        const name = `${data?.first_name ?? ""} ${data?.last_name ?? ""}`.trim();
+        const image = data?.image_url ?? "";
+
+        // Upsert ensures we don't crash if the user record doesn't exist yet
+        await prisma.user.upsert({
+            where: { id: data.id },
+            update: { email, name, image },
+            create: { id: data.id, email, name, image }
+        });
     }
 )
 
