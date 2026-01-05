@@ -141,5 +141,9 @@ const syncWorkspaceMemberCreation = inngest.createFunction(
 export const functions = [
     syncuserCreation,
     syncuserDeletion,
-    syncuserUpdation
+    syncuserUpdation,
+    syncWorkSpaceCreation,
+    syncWorkSpaceDeletion,
+    syncWorkSpaceUpdation,
+    syncWorkspaceMemberCreation
 ];
