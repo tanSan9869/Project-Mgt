@@ -97,9 +97,9 @@ const syncWorkSpaceUpdation = inngest.createFunction(
                 id : data.id
             },
             data:{
-                name:data.name,
-                slug:data.slug,
-                image_url:data.image_url
+                name:data?.name,
+                slug:data?.slug,
+                image_url:data?.image_url
             }
         })
     }
